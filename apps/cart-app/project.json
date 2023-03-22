@@ -5,31 +5,57 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/vite:build",
+      "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/cart-app"
+        "compiler": "babel",
+        "outputPath": "dist/apps/cart-app",
+        "index": "apps/cart-app/src/index.html",
+        "baseHref": "/",
+        "main": "apps/cart-app/src/main.ts",
+        "tsConfig": "apps/cart-app/tsconfig.app.json",
+        "assets": ["apps/cart-app/src/favicon.ico", "apps/cart-app/src/assets"],
+        "styles": [],
+        "scripts": [],
+        "isolatedConfig": true,
+        "webpackConfig": "apps/cart-app/webpack.config.js"
       },
       "configurations": {
         "development": {
-          "mode": "development"
+          "extractLicenses": false,
+          "optimization": false,
+          "sourceMap": true,
+          "vendorChunk": true
         },
         "production": {
-          "mode": "production"
+          "fileReplacements": [
+            {
+              "replace": "apps/cart-app/src/environments/environment.ts",
+              "with": "apps/cart-app/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "webpackConfig": "apps/cart-app/webpack.config.prod.js"
         }
       }
     },
     "serve": {
-      "executor": "@nrwl/vite:dev-server",
+      "executor": "@nrwl/react:module-federation-dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "cart-app:build"
+        "buildTarget": "cart-app:build",
+        "hmr": true,
+        "port": 4200
       },
       "configurations": {
         "development": {
-          "buildTarget": "cart-app:build:development",
-          "hmr": true
+          "buildTarget": "cart-app:build:development"
         },
         "production": {
           "buildTarget": "cart-app:build:production",
@@ -37,11 +63,33 @@
         }
       }
     },
-    "preview": {
-      "executor": "@nrwl/vite:preview-server",
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/cart-app/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/cart-app/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "serve-static": {
+      "executor": "@nrwl/web:file-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "cart-app:build"
+        "buildTarget": "cart-app:build",
+        "port": 4200
       },
       "configurations": {
         "development": {
@@ -50,21 +98,6 @@
         "production": {
           "buildTarget": "cart-app:build:production"
         }
-      }
-    },
-    "test": {
-      "executor": "@nrwl/vite:test",
-      "outputs": ["coverage/apps/cart-app"],
-      "options": {
-        "passWithNoTests": true,
-        "reportsDirectory": "../../coverage/apps/cart-app"
-      }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/cart-app/**/*.{ts,tsx,js,jsx}"]
       }
     }
   },

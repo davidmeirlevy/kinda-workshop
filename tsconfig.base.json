@@ -15,8 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@kinda-workshop/cart": ["libs/cart/src/index.ts"],
-      "@kinda-workshop/shows": ["libs/shows/src/index.ts"]
+      "@kinda-workshop/cart": ["libs/cart/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
